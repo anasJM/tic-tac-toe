@@ -8,9 +8,17 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 0;
+    gap: 20px;
     width: 100vw;
     height: 100vh;
+}
+
+h1 {
+    margin: 0px;
+}
+
+h3 {
+    margin: 0;
 }
 
 .board {
@@ -45,4 +53,14 @@ body {
 
 .cell:hover {
     background-color: rgb(141, 208, 255);
+}
+
+.reset-button {
+    display: none;
+    padding: 15px 40px;
+    border-radius: 999px;
+    border: rgba(0, 0, 0, 0.082) solid 2px;
+    background-color: rgb(168, 219, 255);
+    cursor: pointer;
+    font-weight: bold;
 }
