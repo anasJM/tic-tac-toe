@@ -7,13 +7,16 @@ function Cell() {
     const getCellValue = () => cellValue;
 
     // set the cell value to player value
-    const setCellValue = (playerValue) => {
-        cellValue = playerValue;
+    const setCellValue = (player) => {
+        cellValue = player.value;
         // console.log("yes")
     }
 
-    return { getCellValue, setCellValue, cellValue };
+    return { getCellValue, setCellValue };
 }
+
+
+
 
 // // the gamebord function
 function Gameboard() {
@@ -30,23 +33,26 @@ function Gameboard() {
 
         for (let j = 0; j < columns; j++) {
             board[i].push(Cell());
-            // console.log(board[i][j]);
         }
     }
 
     // select the cell 
     const selectCell = (row, col, player) => {
-        board[row][col].setCellValue(player.value);
+        board[row][col].setCellValue(player);
     }
 
     // print the board
     const printBoard = () => {
         const boardCellValues = board.map((row) => row.map((cell) => cell.getCellValue()));
-        console.table(boardCellValues);
+        return boardCellValues;
     }
 
     return { getBoard, selectCell, printBoard };
 }
+
+
+
+
 
 // game controller
 function GameController(
@@ -84,7 +90,7 @@ function GameController(
     }
 
     const playRound = (row, col) => {
-        console.log(`${activePlayer.name} shoose a cell (row: ${row}, column: ${col})`);
+        console.log(`${activePlayer.name} shoose a cell (row: ${row+1}, column: ${col+1})`);
         board.selectCell(row, col, getActivePlayer());
 
         switchPlayerTurn();
@@ -93,10 +99,74 @@ function GameController(
 
     printNewRound();
 
-    return { getActivePlayer, playRound }
+    return { getActivePlayer, playRound, board }
 }
 
-const game = GameController();
-// game.selectCell(0, 0, 10);
-// console.table(game.getBoard()[0][0].getCellValue());
-// game.printBoard();
+
+
+
+
+// select turn's header & board div
+const turnHeader = document.querySelector(".turn");
+const boardSection = document.querySelector(".board");
+
+
+
+
+
+
+// screen controller
+function screenController() {
+    const game = GameController();
+    let activePlayer = game.getActivePlayer().name;
+    let board = game.board.getBoard();
+
+    //update screen method
+    const updateScreen = () => {
+        // show the active player 
+        turnHeader.textContent = `${activePlayer}'s turn!`;
+
+        boardSection.innerHTML = "";
+
+        //render the cells
+        let row = 1;
+        board.forEach(element => {
+            let column = 1;
+            element.forEach(value => {
+                boardSection.innerHTML += `
+                    <button class="cell" data-row="${row}" data-column="${column}"></button>
+                `;
+                column++;
+            });
+            row++;
+
+        });
+    }
+
+    //clickHandlerBoard method
+    const clickHandlerBoard = () => {
+        // update the board
+        updateScreen();
+
+        // get all the buttons
+        const cells = document.querySelectorAll(".cell");
+
+        cells.forEach(element => {
+            element.addEventListener("click", (event) => {
+                // switch player turn
+                rowCell = event.target.dataset.row -1
+                colCell = event.target.dataset.column -1
+
+                // playround
+                game.playRound(rowCell, colCell)
+
+                console.table(game.board.printBoard())
+            })
+        });
+    }
+
+    return { updateScreen, clickHandlerBoard }
+}
+
+
+screenController().clickHandlerBoard();
