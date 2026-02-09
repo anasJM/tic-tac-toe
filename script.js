@@ -73,19 +73,16 @@ function Gameboard() {
 
 
 // game controller
-function GameController(
-    playerOne = "jamlaoui",
-    playerTwo = "amraoui"
-) {
+function GameController() {
     const board = Gameboard();
 
     const players = [
         {
-            name: playerOne,
+            name: "player 1",
             value: 1
         },
         {
-            name: playerTwo,
+            name: "player 2",
             value: 2
         }
     ];
@@ -93,7 +90,14 @@ function GameController(
     // inisialize winner object
     let winner = {};
 
+    // active player
     let activePlayer = players[0];
+
+    // set player one
+    const setPlayerOneName = (player) => players[0].name = player;
+
+    // set player two
+    const setPlayerTwoName = (player) => players[1].name = player;
 
     // getter winner
     const getWinner = () => winner;
@@ -188,31 +192,60 @@ function GameController(
 
     printNewRound();
 
-    return { getActivePlayer, playRound, resetGame, getWinner, board }
+    return { getActivePlayer, playRound, resetGame, getWinner, setPlayerOneName, setPlayerTwoName, board }
 }
 
 
 
-
-
 // select turn's header & board div
-const turnHeader = document.querySelector(".turn");
-const boardSection = document.querySelector(".board");
+    const turnHeader = document.querySelector(".turn");
+    const boardSection = document.querySelector(".board");
 
-// get all the buttons
-const cells = document.querySelectorAll(".cell");
+    // get all the buttons
+    const cells = document.querySelectorAll(".cell");
 
-// get the reset buttons
-const resetButton = document.querySelector(".reset-button");
+    // get the modal div
+    const modal = document.querySelector(".modal");
 
+    // get the reset buttons
+    const resetButton = document.querySelector(".reset-button");
 
+    // get the form
+    const form = document.querySelector("form");
 
 
 
 
 // screen controller
 function screenController() {
+    // form event listener
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        // get the data from the form
+        const formData = new FormData(form);
+        const playerOneName = formData.get("player-one");
+        const playertwoName = formData.get("player-two");
+
+        // replace the players name with the new ones
+        game.setPlayerOneName(playerOneName);
+        game.setPlayerTwoName(playertwoName);
+
+        // hide the modal to show the board
+        modal.style.display = "none"
+
+        // update the screen
+        updateScreen();
+    })
+
+    // game controller
     const game = GameController();
+
+
+    // adding names method
+    const addPlayersNames = () => {
+
+    }
 
     //update screen method
     const updateScreen = () => {
@@ -280,6 +313,8 @@ function screenController() {
         game.resetGame();
         updateScreen();
     })
+
+    
 
     return { updateScreen, clickHandlerBoard }
 }
